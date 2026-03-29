@@ -1,2 +1,82 @@
 #lang racket/base
 ;Lógica del juego
+
+;Función auxiliar para crear fila de ceros
+
+(define (filazeros n)
+  (if (= n 0) '()
+      (cons 0(filazeros (- n 1))
+  )
+  ))
+
+
+;Funcion para crear tablero
+
+(define (tablero rows cols)
+  ;Agregar verificacion rows>1 and cols>1
+  (if (= rows 0) '()
+      (cons(filazeros cols)(tablero (- rows 1) cols))
+      )
+  )
+
+
+;Funcion auxiliar con verificacion de columnas y filas > 1
+(define(tablero-mayor-a-1 rows cols)
+  
+  (if (and (> rows 1) (> cols 1))
+      (tablero rows cols)
+      (display "")
+
+  ))
+;Funcion para mostrar tablero
+(define (mostrar-tablero tablero)
+
+  (if (list? tablero)
+      (if (equal? tablero '()) (display "\n")
+          (begin (display (car tablero))(newline)(mostrar-tablero (cdr tablero))
+
+
+  ))(display (string-append "Error:" " " "Las columnas y las filas deben ser mayores a 1"))))
+;Obtener numero de filas
+
+(define (contador-filas tablero)
+  (if (equal? tablero '()) 0 (+ 1 (contador-filas (cdr tablero))))
+)
+
+;como parámetro debe ponerse (car(tablero))
+;TODO: encontrar algoritmo para no tener que agregar car en el parámetro
+(define (contador-columnas columna)
+  (if (equal? columna '()) 0 (+ 1 (contador-columnas (cdr columna))))
+)
+
+(define matriz '((1 5 8) (4 8 5) (7 4 5)))
+
+
+(define (obtener-fila tablero row)
+  (list-ref tablero row)
+  )
+(define (obtener-celda tablero row col)
+  (list-ref(list-ref tablero row) col)
+)
+
+(define (set-list lst n valor)
+  (if (= n 0) (cons valor (cdr lst))
+      (cons (car lst) (set-list (cdr lst) (- n 1) valor))))
+
+
+#|
+valor = 0
+n = 2
+[1 2 3 2 5]
+n = 1
+(1 + (2 3 2 5))
+n = 0
+(1 2 +(3 2 5))
+-> (1 2 0 2 5)
+|#
+
+(define (set-cell tablero row col valor)
+  (set-list tablero row
+            (set-list (list-ref tablero row) col valor))
+
+)
