@@ -49,7 +49,7 @@
   (if (equal? columna '()) 0 (+ 1 (contador-columnas (cdr columna))))
 )
 
-(define matriz '((1 5 8) (4 8 5) (7 4 5)))
+(define matriz '((2 2 8) (2 2 2) (7 4 5)))
 
 
 (define (obtener-fila tablero row)
@@ -57,6 +57,10 @@
   )
 (define (obtener-celda tablero row col)
   (list-ref(list-ref tablero row) col)
+)
+
+(define (obtener-celda-fila row col)
+  (list-ref row col)
 )
 
 (define (set-list lst n valor)
@@ -80,3 +84,31 @@ n = 0
             (set-list (list-ref tablero row) col valor))
 
 )
+
+(define (remover-ceros row)
+  (cond ((equal? row '()) '())
+        ((= (car row) 0) (remover-ceros (cdr row)))
+        (else (cons (car row) (remover-ceros (cdr row))))
+        ))
+
+(define (combinar-auxiliar row)
+  (cond ((equal? row '()) '())
+        ((equal? (cdr row) '()) (cons (car row) '()))
+        ((= (obtener-celda-fila row 0) (obtener-celda-fila row 1))
+        (cons (* 2 (obtener-celda-fila row 0)) (combinar-auxiliar (cddr row))))
+        (else (cons (obtener-celda-fila row 0) (combinar-auxiliar (cdr row))))
+        
+    ))
+
+(define (rellenar-ceros row row-size)
+  (cond ((>= (contador-columnas row) row-size) row)
+        (else (rellenar-ceros (agregar-elemento-row row 0) row-size))
+        ))
+
+(define (agregar-elemento-row row value)
+  (cond ((equal?  row '()) (cons value '()))
+        (else (cons (car row) (agregar-elemento-row (cdr row) value)))))
+
+(define (combinar-row row)
+  (rellenar-ceros (combinar-auxiliar row) (contador-columnas row)))
+
