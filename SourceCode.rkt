@@ -112,6 +112,20 @@ n = 0
 (define (combinar-row row)
   (rellenar-ceros (combinar-auxiliar row) (contador-columnas row)))
 
+;(combinar-row (obtener-fila matriz 0)) == movimiento izq
+;(reverse(combinar-row (reverse (obtener-fila matriz 0)))) == movimiento der
+
+(define (sacar-1f mat)
+  (cond( (null? mat) '())
+       (else(cons (car (car mat))(sacar-1f (cdr mat))))))
+
+(define (borrar-1f mat)
+  (cond((null? mat) '())
+      (else (cons (cdr (car mat))(borrar-1f (cdr mat))))))
+
+(define (transpuesta mat )
+  (cond ((null? (car mat)) '())
+         (else (cons (sacar-1f mat)(transpuesta (borrar-1f mat))))))
 #|
 Aplicar los cambios (derecha a izq)Hecho - (izquierda a derecha)En proceso - (Arriba a abajo) -(Abajo a arriba)
 
