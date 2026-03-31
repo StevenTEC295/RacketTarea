@@ -126,4 +126,17 @@ n = 0
 (define (transpuesta mat )
   (cond ((null? (car mat)) '())
          (else (cons (sacar-1f mat)(transpuesta (borrar-1f mat))))))
+#|
+Aplicar los cambios (derecha a izq)Hecho - (izquierda a derecha)En proceso - (Arriba a abajo) -(Abajo a arriba)
+
+
+Arriba abajo:
+
+(2 4 8)                    (2 2 4)              (0 4 4)                   (0 4 0)
+(2 16 8)  -> (Transpuesta) (4 16 8) -> (Cambio) (4 16 8) -> (Transpuesta) (4 16 8)
+(4 4 8)                    (8 8 8)              (0 8 16)                  (4 8 16)
+
+
+|#
+
 
