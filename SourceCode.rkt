@@ -49,7 +49,7 @@
   (if (equal? columna '()) 0 (+ 1 (contador-columnas (cdr columna))))
 )
 
-(define matriz '((1 5 8) (4 8 5) (7 4 5)))
+(define matriz '((2 2 8) (2 2 2) (4 4 2)))
 
 
 (define (obtener-fila tablero row)
@@ -57,6 +57,10 @@
   )
 (define (obtener-celda tablero row col)
   (list-ref(list-ref tablero row) col)
+)
+
+(define (obtener-celda-fila row col)
+  (list-ref row col)
 )
 
 (define (set-list lst n valor)
@@ -80,3 +84,143 @@ n = 0
             (set-list (list-ref tablero row) col valor))
 
 )
+
+(define (remover-ceros row)
+  (cond ((equal? row '()) '())
+        ((= (car row) 0) (remover-ceros (cdr row)))
+        (else (cons (car row) (remover-ceros (cdr row))))
+        ))
+
+(define (combinar-auxiliar row)
+  (cond ((equal? row '()) '())
+        ((equal? (cdr row) '()) (cons (car row) '()))
+        ((= (obtener-celda-fila row 0) (obtener-celda-fila row 1))
+        (cons (* 2 (obtener-celda-fila row 0)) (combinar-auxiliar (cddr row))))
+        (else (cons (obtener-celda-fila row 0) (combinar-auxiliar (cdr row))))
+        
+    ))
+
+(define (rellenar-ceros row row-size)
+  (cond ((>= (contador-columnas row) row-size) row)
+        (else (rellenar-ceros (agregar-elemento-row row 0) row-size))
+        ))
+
+(define (agregar-elemento-row row value)
+  (cond ((equal?  row '()) (cons value '()))
+        (else (cons (car row) (agregar-elemento-row (cdr row) value)))))
+
+(define (combinar-row row)
+  (rellenar-ceros (combinar-auxiliar row) (contador-columnas row)))
+
+(define (sacar-1f mat)
+  (cond( (null? mat) '())
+       (else(cons (car (car mat))(sacar-1f (cdr mat))))))
+
+(define (borrar-1f mat)
+  (cond((null? mat) '())
+      (else (cons (cdr (car mat))(borrar-1f (cdr mat))))))
+
+(define (transpuesta mat )
+  (cond ((null? (car mat)) '())
+         (else (cons (sacar-1f mat)(transpuesta (borrar-1f mat))))))
+
+#|
+Aplicar los cambios (derecha a izq)Hecho - (izquierda a derecha)En proceso - (Arriba a abajo) -(Abajo a arriba)
+
+
+Arriba abajo:
+
+(2 4 8)                    (2 2 4)              (0 4 4)                   (0 4 0)
+(2 16 8)  -> (Transpuesta) (4 16 8) -> (Cambio) (4 16 8) -> (Transpuesta) (4 16 8)
+(4 4 8)                    (8 8 8)              (0 8 16)                  (4 8 16)
+
+Abajo arriba:
+
+(2 4 8)                                (2 2 4)              (0 4 4)                   (0 4 0)
+(2 16 8)  -> (Invertir)->(Transpuesta) (4 16 8) -> (Cambio) (4 16 8) -> (Transpuesta) (4 16 8) -> (Invertir)
+(4 4 8)                                (8 8 8)              (0 8 16)                  (4 8 16)
+
+Arriba abajo:
+
+(2 4 8)                    (2 2 4)              (0 4 4)                   (0 4 0)
+(2 16 8)  -> (Transpuesta) (4 16 8) -> (Cambio) (4 16 8) -> (Transpuesta) (4 16 8)
+(4 4 8)                    (8 8 8)              (0 8 16)                  (4 8 16)
+
+Arriba abajo:
+
+(2 4 8)                    (2 2 4)              (0 4 4)                   (0 4 0)
+(2 16 8)  -> (Transpuesta) (4 16 8) -> (Cambio) (4 16 8) -> (Transpuesta) (4 16 8)
+(4 4 8)                    (8 8 8)              (0 8 16)                  (4 8 16)
+
+Izquierda-Derecha:
+
+(2 4 8)    (8 4 2)    (8 4 2)   (2 4 8)
+(2 2 2) -> (2 2 2) -> (0 2 4)-> (4 2 0)
+(4 4 8)    (8 4 4)    (0 8 8)   (8 8 0)
+
+|#
+
+(define(Derecha-Izquierda matriz)
+                            
+                           (cond((equal? matriz '())'())
+                                (else(cons(rellenar-ceros (combinar-auxiliar (car matriz)) (contador-columnas (car matriz)))(Derecha-Izquierda (cdr matriz)) 
+                                          )))
+
+                           )
+
+(define(Izquierda-Derecha matriz)
+                            
+                           (cond((equal? matriz '())'())
+                                (else(cons(reverse (rellenar-ceros(combinar-auxiliar (reverse(car matriz))) (contador-columnas (car matriz))))(Izquierda-Derecha (cdr matriz)) 
+                                          )))
+
+                           )                  
+(define(Arriba-Abajo matriz)(
+                          transpuesta(Izquierda-Derecha(transpuesta matriz)))
+                                     )
+
+(define(Abajo-Arriba matriz)(
+                          transpuesta(Derecha-Izquierda(transpuesta matriz)))
+                                     )
+
+
+
+#|
+Izquierda:
+-> (funcion-para-aplicar-cadafila matriz)
+   -> si matriz = ():
+      retornar ()
+   -> cambio(car matriz)
+   -> retorna funcion(cdr matriz)
+derecha:
+-> (funcion-para-aplicar-cadafila matriz)
+   -> si matriz = ():
+      retornar ()
+   -> reverse(cambio(reverse(car matriz)))
+   -> retorna funcion(cdr matriz)
+Abajo:
+matriz = Transpuesta(matriz)
+-> (funcion-para-aplicar-cadafila matriz)
+   -> si matriz = ():
+      retornar ()
+   -> cambio(car matriz)
+   -> retorna funcion(cdr matriz)
+matriz = Transpuesta(matriz)
+
+|#
+(define (Test-Arriba-Abajo)
+  (mostrar-tablero matriz)
+  (mostrar-tablero (Arriba-Abajo matriz))
+  )
+
+(define (Test-Abajo-Arriba)
+  (mostrar-tablero matriz)
+  (mostrar-tablero (Abajo-Arriba matriz))
+  )
+
+
+
+
+
+
+
