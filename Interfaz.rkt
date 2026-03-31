@@ -68,15 +68,30 @@
 ; MANEJADOR DE EVENTOS (Teclado)
 ; ===================================================================
 
+; Esta función intercepta las teclas. 
+; Entradas: 
+;  - tablero: La matriz actual (lista de listas)
+;  - tecla: Un string con la tecla presionada ("up", "down", "left", "right")
+; Salida: 
+;  - Una matriz NUEVA con los movimientos ya aplicados.
 (define (manejar-teclado tablero tecla)
   (cond 
-    ; IMPORTANTE PERSONA 3: 
+    ; Si la tecla es la flecha izquierda...
+    ; Toma la matriz actual, pásasela a la función 'mover-izquierda' de SourceCode.rkt,
+    ; y el resultado que esa función escupa, se convertirá en el nuevo tablero.
+
     ; [(key=? tecla "left")  (mover-izquierda tablero)]
+
+    ;lo mismo en la demas direcciones, pero con sus respectivas funciones de movimiento.
     ; [(key=? tecla "right") (mover-derecha tablero)]
     ; [(key=? tecla "up")    (mover-arriba tablero)]
     ; [(key=? tecla "down")  (mover-abajo tablero)]
     
-    ; se mantiene así porque aun no tenemos la logica completa del juego para unirla 
+    ; Si el usuario presiona cualquier otra tecla (la letra 'A', espacio, enter...),
+    ; la función condicional cae en este 'else'. 
+    ; Al retornar 'tablero', le decimos a Racket: "No hagas ningún cambio matemático, 
+    ; devuelve la misma matriz exacta que entró".
+    
     [else tablero]))
 
 ; ===================================================================
