@@ -49,7 +49,7 @@
   (if (equal? columna '()) 0 (+ 1 (contador-columnas (cdr columna))))
 )
 
-(define matriz '((2 2 8) (2 2 2) (4 4 2)))
+(define matriz '((2 0 8) (0 2 2) (0 0 0)))
 
 
 (define (obtener-fila tablero row)
@@ -218,6 +218,14 @@ matriz = Transpuesta(matriz)
   (mostrar-tablero (Abajo-Arriba matriz))
   )
 
+(define (posiciones-vacias tablero row col)
+  (cond ((equal? tablero '()) '())
+        ((equal? (car tablero) '()) (posiciones-vacias (cdr tablero) (+ row 1) 0))
+        ((= (car (car tablero)) 0) (cons (cons row col)
+                                                     (posiciones-vacias (cons (cdr (car tablero)) (cdr tablero))
+                                                                        row (+ col 1))))
+        (else (posiciones-vacias (cons (cdr (car tablero)) (cdr tablero))
+                                                                        row (+ col 1)))))
 
 
 
