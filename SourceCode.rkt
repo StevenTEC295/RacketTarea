@@ -245,7 +245,7 @@ matriz = Transpuesta(matriz)
   (set-cell tablero row col valor)
   )
 (define (agregar-celdas-iniciales tablero)
-  (agregar-celda-aleatoria(agregar-celda-aleatoria(tablero)))
+  (agregar-celda-aleatoria(agregar-celda-aleatoria tablero))
   )
 
 ;Funcionalidades de Perdida y Victoria
@@ -306,6 +306,7 @@ matriz = Transpuesta(matriz)
          Izquierda-Derecha
          Arriba-Abajo
          Abajo-Arriba
+         agregar-celda-aleatoria
          won?
          lost?
          )

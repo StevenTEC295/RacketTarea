@@ -81,12 +81,24 @@
     ; Toma la matriz actual, pásasela a la función 'mover-izquierda' de SourceCode.rkt,
     ; y el resultado que esa función escupa, se convertirá en el nuevo tablero.
 
-     [(key=? tecla "left")  (Derecha-Izquierda tablero)]
+     [(key=? tecla "left")  (
+                             if (equal? (Derecha-Izquierda tablero) tablero) tablero
+                                (agregar-celda-aleatoria (Derecha-Izquierda tablero)
+                             ))]
 
     ;lo mismo en la demas direcciones, pero con sus respectivas funciones de movimiento.
-     [(key=? tecla "right") (Izquierda-Derecha tablero)]
-     [(key=? tecla "up")    (Abajo-Arriba tablero)]
-     [(key=? tecla "down")  (Arriba-Abajo tablero)]
+     [(key=? tecla "right") (
+                             if (equal? (Izquierda-Derecha tablero) tablero) tablero
+                                (agregar-celda-aleatoria (Izquierda-Derecha tablero)
+                             ))]
+     [(key=? tecla "up")    (
+                             if (equal? (Abajo-Arriba tablero) tablero) tablero
+                                (agregar-celda-aleatoria (Abajo-Arriba tablero)
+                             ))]
+     [(key=? tecla "down")  (
+                             if (equal? (Arriba-Abajo tablero) tablero) tablero
+                                (agregar-celda-aleatoria (Arriba-Abajo tablero)
+                             ))]
     
     ; Si el usuario presiona cualquier otra tecla (la letra 'A', espacio, enter...),
     ; la función condicional cae en este 'else'. 
@@ -94,7 +106,11 @@
     ; devuelve la misma matriz exacta que entró".
     
     [else tablero]))
+;Condición para detener el juego
 
+(define (game-over? tablero)
+  (or (won? tablero) (lost? tablero))
+  )
 ; ===================================================================
 ; INICIALIZACIÓN (BIG-BANG)
 ; ===================================================================
@@ -110,12 +126,14 @@ Hay que agregar logica para celdas aleatorias y de won y lost
 ; Función que arranca todo.
 (define (iniciar-juego tablero)
   (big-bang tablero
-    (to-draw pantalla-juego)
-    (agregar-celda-aleatoria)
-    (on-key manejar-teclado)      ;
-    (name "2048 en Racket - TEC"))) ; Titulo de la ventana
+    [to-draw pantalla-juego]
+    [on-key manejar-teclado]
+    [stop-when game-over?]
+    [name "2048 en Racket - TEC"])) ; Titulo de la ventana
 
 
+; Función principal
 (define (main row col)
-  (iniciar-juego (tablero-mayor-a-1 row col)))
+        (iniciar-juego (agregar-celdas-iniciales (tablero-mayor-a-1 row col)))
+  )
 
