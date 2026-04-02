@@ -49,7 +49,7 @@
   (if (equal? columna '()) 0 (+ 1 (contador-columnas (cdr columna))))
 )
 
-(define matriz '((2 4 8) (8 16 2) (4 64 16)))
+(define matriz '((2 4 8) (8 16 8) (4 64 8)))
 
 
 (define (obtener-fila tablero row)
@@ -244,6 +244,9 @@ matriz = Transpuesta(matriz)
   (define valor (if (< (random 10) 9) 2 4))
   (set-cell tablero row col valor)
   )
+(define (agregar-celdas-iniciales tablero)
+  (agregar-celda-aleatoria(agregar-celda-aleatoria(tablero)))
+  )
 
 ;Funcionalidades de Perdida y Victoria
 
@@ -296,5 +299,14 @@ matriz = Transpuesta(matriz)
   (sin-movimientos-horizontales? (transpuesta tablero))
   )
 
-
+; Exportar funciones públicas
+(provide tablero-mayor-a-1
+         agregar-celdas-iniciales
+         Derecha-Izquierda
+         Izquierda-Derecha
+         Arriba-Abajo
+         Abajo-Arriba
+         won?
+         lost?
+         )
 

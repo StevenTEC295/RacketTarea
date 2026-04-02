@@ -81,12 +81,12 @@
     ; Toma la matriz actual, pásasela a la función 'mover-izquierda' de SourceCode.rkt,
     ; y el resultado que esa función escupa, se convertirá en el nuevo tablero.
 
-    ; [(key=? tecla "left")  (mover-izquierda tablero)]
+     [(key=? tecla "left")  (Derecha-Izquierda tablero)]
 
     ;lo mismo en la demas direcciones, pero con sus respectivas funciones de movimiento.
-    ; [(key=? tecla "right") (mover-derecha tablero)]
-    ; [(key=? tecla "up")    (mover-arriba tablero)]
-    ; [(key=? tecla "down")  (mover-abajo tablero)]
+     [(key=? tecla "right") (Izquierda-Derecha tablero)]
+     [(key=? tecla "up")    (Abajo-Arriba tablero)]
+     [(key=? tecla "down")  (Arriba-Abajo tablero)]
     
     ; Si el usuario presiona cualquier otra tecla (la letra 'A', espacio, enter...),
     ; la función condicional cae en este 'else'. 
@@ -99,17 +99,23 @@
 ; INICIALIZACIÓN (BIG-BANG)
 ; ===================================================================
 
+
+#|
+Hay errores en el big-bang
+
+Estado inicial-clausulas entre corchetes
+Hay que agregar logica para celdas aleatorias y de won y lost
+
+|#
 ; Función que arranca todo.
-(define (iniciar-juego tablero-inicial)
-  (big-bang tablero-inicial
-    (to-draw pantalla-juego)      
+(define (iniciar-juego tablero)
+  (big-bang tablero
+    (to-draw pantalla-juego)
+    (agregar-celda-aleatoria)
     (on-key manejar-teclado)      ;
     (name "2048 en Racket - TEC"))) ; Titulo de la ventana
 
-; Matriz para hacer pruebas
 
-(define tablero-prueba 
-  '((0 2 4 8)
-    (16 32 64 128)
-    (256 512 1024 2048)
-    (0 0 2 2)))
+(define (main row col)
+  (iniciar-juego (tablero-mayor-a-1 row col)))
+
