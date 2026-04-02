@@ -15,8 +15,8 @@
 
 ; Función para dar el color de fondo según el número de la celda
 (define (color-fondo numero)
-  (cond [(= numero 0)    "lightgray"]
-        [(= numero 2)    "white"]
+  (cond [(= numero 0)    "white"]
+        [(= numero 2)    "lightgrey"]
         [(= numero 4)    "bisque"]
         [(= numero 8)    "orange"]
         [(= numero 16)   "tomato"]
@@ -31,7 +31,8 @@
 
 ; Función para el color del texto
 (define (color-texto numero)
-  (if (= numero 4) "dimgray" "white"))
+  (if (or (= numero 4) (= numero 2)) "dimgray" "white"))
+
 
 ; ===================================================================
 ; MOTOR DE DIBUJO (Recursividad pura, cero mutaciones)
