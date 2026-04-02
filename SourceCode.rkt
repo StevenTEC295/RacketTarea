@@ -208,6 +208,8 @@ matriz = Transpuesta(matriz)
 matriz = Transpuesta(matriz)
 
 |#
+#|
+;Funciones de prueba
 (define (Test-Arriba-Abajo)
   (mostrar-tablero matriz)
   (mostrar-tablero (Arriba-Abajo matriz))
@@ -217,6 +219,7 @@ matriz = Transpuesta(matriz)
   (mostrar-tablero matriz)
   (mostrar-tablero (Abajo-Arriba matriz))
   )
+|#
 
 (define (posiciones-vacias tablero row col)
   (cond ((equal? tablero '()) '())
@@ -226,6 +229,22 @@ matriz = Transpuesta(matriz)
                                                                         row (+ col 1))))
         (else (posiciones-vacias (cons (cdr (car tablero)) (cdr tablero))
                                                                         row (+ col 1)))))
+
+;Funciones de agregar celda aleatoria
+(define(agregar-celda-aleatoria tablero) ;Agrega un valor a una celda entre 1 y 2 si existen campos vacíos
+  (define lista-posiciones-vacias (posiciones-vacias tablero 0 0))
+  (if (equal? lista-posiciones-vacias '())tablero
+      (agregar-celda-aleatoria-aux tablero lista-posiciones-vacias (random(contador-filas lista-posiciones-vacias )))
+      ))
+
+(define (agregar-celda-aleatoria-aux tablero pos-vacias index); Se genera el valor random con 90% que sea 2 y 10% que sea 4
+  (define pos (list-ref pos-vacias index))
+  (define row (car pos))
+  (define col (cdr pos))
+  (define valor (if (< (random 10) 9) 2 4))
+  (set-cell tablero row col valor)
+  )
+
 
 
 
