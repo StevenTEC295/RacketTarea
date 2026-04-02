@@ -49,7 +49,7 @@
   (if (equal? columna '()) 0 (+ 1 (contador-columnas (cdr columna))))
 )
 
-(define matriz '((2 0 8) (0 2 2) (0 0 0)))
+(define matriz '((2 4 8) (8 16 2) (4 64 16)))
 
 
 (define (obtener-fila tablero row)
@@ -245,9 +245,56 @@ matriz = Transpuesta(matriz)
   (set-cell tablero row col valor)
   )
 
+;Funcionalidades de Perdida y Victoria
+
+;Victoria
+(define (won? tablero)
+  (cond [(equal? tablero '()) #f] ; si se revisaron todas las filas y no estaba 2048 es falso
+        [(2048? (car tablero))#t]
+        [else (won? (cdr tablero))]
+                               ))
+(define (2048? row)
+  (cond
+    [(equal? row '())#f]; si se revisaron todos los campos y no estaba 2048 retorna falso
+    [(= (car row) 2048)#t] 
+    [else (2048? (cdr row))]
+    )
+  )
+
+;Derrota
+(define (lost? tablero)
+  (and (sin-espacios-vacios? tablero)(sin-movimientos-posibles? tablero))
+  )
+;Funcion que verifica que no existan espacios vacios
+(define (sin-espacios-vacios? tablero)
+  (equal? (posiciones-vacias tablero 0 0) '())
 
 
+  )
+;Funcion que verifica que no hayan más movimientos posibles
+(define (sin-movimientos-posibles? tablero)
+  (and (sin-movimientos-horizontales? tablero)(sin-movimientos-verticales? tablero))
+  )
+;Funcion que verifica que no hayan movimientos horizontales posibles
+(define (sin-movimientos-horizontales? tablero)
+  (cond
+    [(equal? tablero '())#t]
+    [(combinacion-horizontal? (car tablero))#f]
+    [else (sin-movimientos-horizontales? (cdr tablero))]
+    )
+  )
 
+(define (combinacion-horizontal? row)
+  (cond
+    [(equal? (cdr row) '()) #f]
+    [(= (obtener-celda-fila row 0) (obtener-celda-fila row 1)) #t]
+    [else(combinacion-horizontal? (cdr row))]
+    )
+
+  )
+(define (sin-movimientos-verticales? tablero)
+  (sin-movimientos-horizontales? (transpuesta tablero))
+  )
 
 
 
