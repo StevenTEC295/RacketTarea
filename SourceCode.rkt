@@ -49,7 +49,9 @@
   (if (equal? columna '()) 0 (+ 1 (contador-columnas (cdr columna))))
 )
 
-(define matriz '((2 4 8) (8 16 8) (4 64 8)))
+(define matriz '((16 16 16)
+                 (8 0 0)
+                 (4 16 0)))
 
 
 (define (obtener-fila tablero row)
@@ -124,6 +126,8 @@ n = 0
   (cond ((null? (car mat)) '())
          (else (cons (sacar-1f mat)(transpuesta (borrar-1f mat))))))
 
+
+
 #|
 Aplicar los cambios (derecha a izq)Hecho - (izquierda a derecha)En proceso - (Arriba a abajo) -(Abajo a arriba)
 
@@ -163,7 +167,7 @@ Izquierda-Derecha:
 (define(Derecha-Izquierda matriz)
                             
                            (cond((equal? matriz '())'())
-                                (else(cons(rellenar-ceros (combinar-auxiliar (car matriz)) (contador-columnas (car matriz)))(Derecha-Izquierda (cdr matriz)) 
+                                (else(cons(rellenar-ceros (combinar-auxiliar (remover-ceros(car matriz))) (contador-columnas (car matriz)))(Derecha-Izquierda (cdr matriz)) 
                                           )))
 
                            )
@@ -171,7 +175,7 @@ Izquierda-Derecha:
 (define(Izquierda-Derecha matriz)
                             
                            (cond((equal? matriz '())'())
-                                (else(cons(reverse (rellenar-ceros(combinar-auxiliar (reverse(car matriz))) (contador-columnas (car matriz))))(Izquierda-Derecha (cdr matriz)) 
+                                (else(cons(reverse (rellenar-ceros(combinar-auxiliar (reverse (remover-ceros(car matriz)))) (contador-columnas (car matriz))))(Izquierda-Derecha (cdr matriz)) 
                                           )))
 
                            )                  
@@ -183,6 +187,15 @@ Izquierda-Derecha:
                           transpuesta(Derecha-Izquierda(transpuesta matriz)))
                                      )
 
+(define (Test-Arriba-Abajo)
+  (mostrar-tablero matriz)
+  (mostrar-tablero (Arriba-Abajo matriz))
+  )
+
+(define (Test-Abajo-Arriba)
+  (mostrar-tablero matriz)
+  (mostrar-tablero (Abajo-Arriba matriz))
+  )
 
 
 #|
