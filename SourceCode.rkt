@@ -53,6 +53,10 @@
                  (8 0 0)
                  (4 16 0)))
 
+(define matriz-perder '((16 8 4 128)
+                        (8 4 8 32)
+                        (4 16 0 64)))
+
 
 (define (obtener-fila tablero row)
   (list-ref tablero row)
@@ -322,5 +326,7 @@ matriz = Transpuesta(matriz)
          agregar-celda-aleatoria
          won?
          lost?
+         contador-filas
+         contador-columnas
          )
 

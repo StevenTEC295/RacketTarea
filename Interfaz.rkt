@@ -61,9 +61,28 @@
 
 ; 4. Pantalla final con el fondo gris oscuro
 (define (pantalla-juego tablero)
-  (overlay
-   (dibujar-tablero tablero)
-   (rectangle (+ 20 (* 4 TAMANO-CELDA)) (+ 20 (* 4 TAMANO-CELDA)) "solid" "dimgray")))
+  (define fondo-gris (rectangle (+ 20 (* (contador-columnas (car tablero)) TAMANO-CELDA)) (+ 20 (* (contador-filas tablero) TAMANO-CELDA)) "solid" "dimgray"))
+  (define tablero-dibujado (dibujar-tablero tablero))
+  (define fondo-completo (overlay tablero-dibujado fondo-gris))
+  
+  (cond
+    ; Si ganó (tiene un 2048)
+    [(won? tablero)
+     (overlay
+      (rectangle (+ 20 (* (contador-columnas (car tablero)) TAMANO-CELDA)) (+ 20 (* (contador-filas tablero)  TAMANO-CELDA)) "solid" (make-color 0 0 0 40))
+      (text "¡VICTORIA!" 50 "green")
+      fondo-completo)]
+    
+    ; Si perdió (sin movimientos posibles)
+    [(lost? tablero)
+     (overlay
+      (rectangle (+ 20 (* (contador-columnas (car tablero)) TAMANO-CELDA)) (+ 20 (* (contador-filas tablero) TAMANO-CELDA)) "solid" (make-color 0 0 0 40))
+      (text "GAME OVER" 50 "red")
+      fondo-completo)]
+    
+    ; Juego en curso
+    [else
+     fondo-completo]))
 
 ; ===================================================================
 ; MANEJADOR DE EVENTOS (Teclado)
@@ -106,11 +125,7 @@
     ; devuelve la misma matriz exacta que entró".
     
     [else tablero]))
-;Condición para detener el juego
 
-(define (game-over? tablero)
-  (or (won? tablero) (lost? tablero))
-  )
 ; ===================================================================
 ; INICIALIZACIÓN (BIG-BANG)
 ; ===================================================================
@@ -128,8 +143,17 @@ Hay que agregar logica para celdas aleatorias y de won y lost
   (big-bang tablero
     [to-draw pantalla-juego]
     [on-key manejar-teclado]
-    [stop-when game-over?]
     [name "2048 en Racket - TEC"])) ; Titulo de la ventana
+
+;Matriz de prueba para verificar condición de victoria
+(define matriz-ganar '((16 8 4 1024)
+                 (8 4 0 1024)
+                 (4 16 0 0)))
+
+;Matriz de prueba para verificar condición de perder
+(define matriz-perder '((16 8 4 128)
+                        (8 4 8 32)
+                        (4 0 0 0)))
 
 
 ; Función principal
@@ -137,3 +161,6 @@ Hay que agregar logica para celdas aleatorias y de won y lost
         (iniciar-juego (agregar-celdas-iniciales (tablero-mayor-a-1 row col)))
   )
 
+(define (main-prueba tablero)
+        (iniciar-juego (agregar-celdas-iniciales tablero))
+  )
