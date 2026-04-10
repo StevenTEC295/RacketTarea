@@ -1,6 +1,11 @@
 #lang racket/base
 ;Lógica del juego
 
+
+;===============================================================================#
+;Funciones basicas                                                              #
+;===============================================================================#
+
 ;Función auxiliar para crear fila de ceros
 (define (filazeros n)
   (if (= n 0) '()
@@ -146,6 +151,14 @@ n = 0
   (cond ((null? (car mat)) '())
          (else (cons (sacar-1f mat)(transpuesta (borrar-1f mat))))))
 
+
+
+
+
+;============================================================================================#
+;Movimiento de baldosas                                                                      #
+;============================================================================================#
+
 ;==========================================
 
 #| Ejemplo visual de como funciona las funciones responsables de mover las baldosas
@@ -176,6 +189,9 @@ Abajo Arriba:
 (4 4 4)                    (4 0 4)                         (8 0 0)                   (0 4 0)
 
 |#
+
+;==========================================
+
 
 (define(Derecha-Izquierda matriz)
                             
@@ -221,20 +237,17 @@ matriz = Transpuesta(matriz)
    -> cambio(car matriz)
    -> retorna funcion(cdr matriz)
 matriz = Transpuesta(matriz)
-
 |#
-#|
-;Funciones de prueba
-(define (Test-Arriba-Abajo)
-  (mostrar-tablero matriz)
-  (mostrar-tablero (Arriba-Abajo matriz))
-  )
 
-(define (Test-Abajo-Arriba)
-  (mostrar-tablero matriz)
-  (mostrar-tablero (Abajo-Arriba matriz))
-  )
-|#
+
+
+
+
+
+
+;===============================================================================#
+;Generación de numeros de 2 o 4 en baldosas vacias en cada movimiento realizado #
+;===============================================================================#
 
 ; Función que encuentra las posiciones vacias(0) del tablero
 (define (posiciones-vacias tablero row col)
@@ -264,7 +277,13 @@ matriz = Transpuesta(matriz)
   (agregar-celda-aleatoria(agregar-celda-aleatoria tablero))
   )
 
-;Funcionalidades de Perdida y Victoria
+
+
+
+
+;===============================================================================#
+;Funcionalidades de Perdida y Victoria                                          #
+;===============================================================================#
 
 ;Victoria
 (define (won? tablero)
@@ -314,6 +333,9 @@ matriz = Transpuesta(matriz)
 (define (sin-movimientos-verticales? tablero)
   (sin-movimientos-horizontales? (transpuesta tablero))
   )
+
+
+
 
 ; Exportar funciones públicas
 (provide tablero-mayor-a-1
