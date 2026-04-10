@@ -2,7 +2,6 @@
 ;Lógica del juego
 
 ;Función auxiliar para crear fila de ceros
-
 (define (filazeros n)
   (if (= n 0) '()
       (cons 0(filazeros (- n 1))
@@ -19,6 +18,12 @@
       )
   )
 
+;========================================
+;Matriz de prueba para las funciones
+(define matriz '((2 4 4)
+                 (0 8 0)
+                 (4 4 4)))
+;========================================
 
 ;Funcion auxiliar con verificacion de columnas y filas > 1
 (define(tablero-mayor-a-1 rows cols)
@@ -28,6 +33,7 @@
       (display "")
 
   ))
+
 ;Funcion para mostrar tablero
 (define (mostrar-tablero tablero)
 
@@ -37,38 +43,34 @@
 
 
   ))(display (string-append "Error:" " " "Las columnas y las filas deben ser mayores a 1"))))
-;Obtener numero de filas
 
+;Obtener numero de filas
 (define (contador-filas tablero)
   (if (equal? tablero '()) 0 (+ 1 (contador-filas (cdr tablero))))
 )
 
-;como parámetro debe ponerse (car(tablero))
-;TODO: encontrar algoritmo para no tener que agregar car en el parámetro
+;Obtener numero de columnas
+;Se obtiene usando el (car tablero)
 (define (contador-columnas columna)
   (if (equal? columna '()) 0 (+ 1 (contador-columnas (cdr columna))))
 )
 
-(define matriz '((16 16 16)
-                 (8 0 0)
-                 (4 16 0)))
-
-(define matriz-perder '((16 8 4 128)
-                        (8 4 8 32)
-                        (4 16 0 64)))
-
-
+;Obtener fila en especifico
 (define (obtener-fila tablero row)
   (list-ref tablero row)
   )
-(define (obtener-celda tablero row col)
-  (list-ref(list-ref tablero row) col)
-)
 
+;Obtener baldosa/celda en en una posición en especifico
+;(define (obtener-celda tablero row col)
+  ;(list-ref(list-ref tablero row) col)
+;)
+
+;Obtener baldosa/celda de una fila en una posición en especifico de la columna 
 (define (obtener-celda-fila row col)
   (list-ref row col)
 )
 
+;Cambiar el valor de un elemento en lista
 (define (set-list lst n valor)
   (if (= n 0) (cons valor (cdr lst))
       (cons (car lst) (set-list (cdr lst) (- n 1) valor))))
@@ -85,93 +87,100 @@ n = 0
 -> (1 2 0 2 5)
 |#
 
+
+;Función para cambiar una celda/baldosa en especifico del tablero/matriz
 (define (set-cell tablero row col valor)
   (set-list tablero row
             (set-list (list-ref tablero row) col valor))
 
 )
 
+;Función para remover los ceros presentes en la lista
 (define (remover-ceros row)
   (cond ((equal? row '()) '())
         ((= (car row) 0) (remover-ceros (cdr row)))
         (else (cons (car row) (remover-ceros (cdr row))))
         ))
 
-(define (combinar-auxiliar row)
+;Función que suma baldosas/celdas del mismo numero que esten cercanas
+(define (combinar row)
   (cond ((equal? row '()) '())
         ((equal? (cdr row) '()) (cons (car row) '()))
         ((= (obtener-celda-fila row 0) (obtener-celda-fila row 1))
-        (cons (* 2 (obtener-celda-fila row 0)) (combinar-auxiliar (cddr row))))
-        (else (cons (obtener-celda-fila row 0) (combinar-auxiliar (cdr row))))
+        (cons (* 2 (obtener-celda-fila row 0)) (combinar (cddr row))))
+        (else (cons (obtener-celda-fila row 0) (combinar (cdr row))))
         
     ))
 
+;Función para agregar ceros en la lista  
 (define (rellenar-ceros row row-size)
   (cond ((>= (contador-columnas row) row-size) row)
         (else (rellenar-ceros (agregar-elemento-row row 0) row-size))
         ))
 
+;Función que agrega elemento en la lista/fila
 (define (agregar-elemento-row row value)
   (cond ((equal?  row '()) (cons value '()))
         (else (cons (car row) (agregar-elemento-row (cdr row) value)))))
 
-(define (combinar-row row)
-  (rellenar-ceros (combinar-auxiliar row) (contador-columnas row)))
+;(define (combinar-row row)
+  ;(rellenar-ceros (combinar-auxiliar row) (contador-columnas row)))
 
-(define (sacar-1f mat)
+
+;==========================================
+; Funcion de transpuesta
+;==========================================
+
+; Crea lista tomando el primer elemento de cada fila en el tablero/matriz
+(define (sacar-1f mat)   
   (cond( (null? mat) '())
        (else(cons (car (car mat))(sacar-1f (cdr mat))))))
 
+; Crea lista borrando el primer elemento de cada fila en el tablero/matriz
 (define (borrar-1f mat)
   (cond((null? mat) '())
       (else (cons (cdr (car mat))(borrar-1f (cdr mat))))))
 
-(define (transpuesta mat )
+; Contrucción matriz transpuesta 
+(define (transpuesta mat)
   (cond ((null? (car mat)) '())
          (else (cons (sacar-1f mat)(transpuesta (borrar-1f mat))))))
 
+;==========================================
+
+#| Ejemplo visual de como funciona las funciones responsables de mover las baldosas
+
+Derecha Izquierda:
+
+(2 4 4)                  (2 4 4)             (2 8)                   (2 8 0)
+(0 8 0) -> remover ceros   (8)   -> combinar  (8)  -> Rellenar ceros (8 0 0)
+(4 4 4)                  (4 4 4)             (8 4)                   (8 4 0)
+
+Izquierda Derecha:
+
+(2 4 4)                  (2 4 4)            (4 4 2)                 (8 2)                   (8 2 0)            (0 2 8)
+(0 8 0) -> remover ceros   (8)   -> reversa   (8)   ->  combinar ->  (8)  -> Rellenar ceros (8 0 0) -> reversa (0 0 8)
+(4 4 4)                  (4 4 4)            (4 4 4)                 (8 4)                   (8 4 0)            (0 4 8)
 
 
-#|
-Aplicar los cambios (derecha a izq)Hecho - (izquierda a derecha)En proceso - (Arriba a abajo) -(Abajo a arriba)
+Arriba Abajo:
 
+(2 4 4)                    (2 0 4)                         (0 2 4)                   (0 4 0)
+(0 8 0)  -> (Transpuesta)  (4 8 4) -> (Izquierda-Derecha)  (4 8 4) -> (Transpuesta)  (2 8 0)
+(4 4 4)                    (4 0 4)                         (0 0 8)                   (4 4 8)
 
-Arriba abajo:
+Abajo Arriba:
 
-(2 4 8)                    (2 2 4)              (0 4 4)                   (0 4 0)
-(2 16 8)  -> (Transpuesta) (4 16 8) -> (Cambio) (4 16 8) -> (Transpuesta) (4 16 8)
-(4 4 8)                    (8 8 8)              (0 8 16)                  (4 8 16)
-
-Abajo arriba:
-
-(2 4 8)                                (2 2 4)              (0 4 4)                   (0 4 0)
-(2 16 8)  -> (Invertir)->(Transpuesta) (4 16 8) -> (Cambio) (4 16 8) -> (Transpuesta) (4 16 8) -> (Invertir)
-(4 4 8)                                (8 8 8)              (0 8 16)                  (4 8 16)
-
-Arriba abajo:
-
-(2 4 8)                    (2 2 4)              (0 4 4)                   (0 4 0)
-(2 16 8)  -> (Transpuesta) (4 16 8) -> (Cambio) (4 16 8) -> (Transpuesta) (4 16 8)
-(4 4 8)                    (8 8 8)              (0 8 16)                  (4 8 16)
-
-Arriba abajo:
-
-(2 4 8)                    (2 2 4)              (0 4 4)                   (0 4 0)
-(2 16 8)  -> (Transpuesta) (4 16 8) -> (Cambio) (4 16 8) -> (Transpuesta) (4 16 8)
-(4 4 8)                    (8 8 8)              (0 8 16)                  (4 8 16)
-
-Izquierda-Derecha:
-
-(2 4 8)    (8 4 2)    (8 4 2)   (2 4 8)
-(2 2 2) -> (2 2 2) -> (0 2 4)-> (4 2 0)
-(4 4 8)    (8 4 4)    (0 8 8)   (8 8 0)
+(2 4 4)                    (2 0 4)                         (2 4 0)                   (2 4 8)
+(0 8 0)  -> (Transpuesta)  (4 8 4) -> (Derecha-Izquierda)  (4 8 4) -> (Transpuesta)  (4 8 0)
+(4 4 4)                    (4 0 4)                         (8 0 0)                   (0 4 0)
 
 |#
 
 (define(Derecha-Izquierda matriz)
                             
                            (cond((equal? matriz '())'())
-                                (else(cons(rellenar-ceros (combinar-auxiliar (remover-ceros(car matriz))) (contador-columnas (car matriz)))(Derecha-Izquierda (cdr matriz)) 
+                                (else(cons(rellenar-ceros (combinar (remover-ceros(car matriz))) (contador-columnas (car matriz)))(Derecha-Izquierda (cdr matriz)) 
                                           )))
 
                            )
@@ -179,7 +188,7 @@ Izquierda-Derecha:
 (define(Izquierda-Derecha matriz)
                             
                            (cond((equal? matriz '())'())
-                                (else(cons(reverse (rellenar-ceros(combinar-auxiliar (reverse (remover-ceros(car matriz)))) (contador-columnas (car matriz))))(Izquierda-Derecha (cdr matriz)) 
+                                (else(cons(reverse (rellenar-ceros(combinar (reverse (remover-ceros(car matriz)))) (contador-columnas (car matriz))))(Izquierda-Derecha (cdr matriz)) 
                                           )))
 
                            )                  
@@ -190,17 +199,6 @@ Izquierda-Derecha:
 (define(Abajo-Arriba matriz)(
                           transpuesta(Derecha-Izquierda(transpuesta matriz)))
                                      )
-
-(define (Test-Arriba-Abajo)
-  (mostrar-tablero matriz)
-  (mostrar-tablero (Arriba-Abajo matriz))
-  )
-
-(define (Test-Abajo-Arriba)
-  (mostrar-tablero matriz)
-  (mostrar-tablero (Abajo-Arriba matriz))
-  )
-
 
 #|
 Izquierda:
@@ -238,6 +236,7 @@ matriz = Transpuesta(matriz)
   )
 |#
 
+; Función que encuentra las posiciones vacias(0) del tablero
 (define (posiciones-vacias tablero row col)
   (cond ((equal? tablero '()) '())
         ((equal? (car tablero) '()) (posiciones-vacias (cdr tablero) (+ row 1) 0))
